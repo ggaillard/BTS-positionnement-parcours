@@ -8,8 +8,10 @@
 :root{--bg:#f4f6f8;--card:#fff;--ink:#17202b;--mute:#5d6774;--line:#dfe4ea;--acc:#0f766e;--acc2:#e3f4f2;--warn:#a1520b;--warnbg:#fdf2e4;--r:12px}
 *{box-sizing:border-box}
 body{margin:0;font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
-header{max-width:980px;margin:auto;padding:20px 22px 0}
+header{max-width:980px;margin:auto;padding:20px 22px 0;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
 h1{font-size:22px;margin:0}.sub{color:var(--mute);margin:2px 0 0}
+.badge{background:var(--acc);color:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;border:0;font-family:inherit}
+.badge.vide{background:var(--warnbg);color:var(--warn)}
 nav{max-width:980px;margin:14px auto 0;padding:0 22px;display:flex;gap:6px;flex-wrap:wrap}
 nav button{border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit;color:var(--ink)}
 nav button[aria-selected=true]{background:var(--acc);border-color:var(--acc);color:#fff}
@@ -19,12 +21,17 @@ section{display:none}section.on{display:block}
 .card h2{font-size:17px;margin:0 0 8px}.card h3{font-size:15px;margin:12px 0 4px}
 .grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}@media(max-width:760px){.g2{grid-template-columns:1fr}}
 .btn{border:0;background:var(--acc);color:#fff;padding:9px 16px;border-radius:8px;cursor:pointer;font:inherit}
+.btn:disabled{opacity:.4;cursor:default}
 .btn.sec{background:var(--acc2);color:var(--acc)}.btn.ghost{background:transparent;color:var(--mute);border:1px solid var(--line)}
 .opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;padding:10px 12px;border-radius:8px;margin:6px 0;cursor:pointer;font:inherit;color:var(--ink)}
 .opt:hover{border-color:var(--acc)}.opt.idk{color:var(--mute);font-style:italic}
+.seg{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+.seg button{flex:1;min-width:140px;border:2px solid var(--line);background:#fff;border-radius:10px;padding:12px;cursor:pointer;font:inherit;color:var(--ink);text-align:left}
+.seg button b{display:block;font-size:16px}.seg button span{color:var(--mute);font-size:13px}
+.seg button[aria-pressed=true]{border-color:var(--acc);background:var(--acc2)}
 code,.mono{font-family:ui-monospace,Consolas,monospace;font-size:13.5px}
 pre{background:#f3f5f7;border:1px solid var(--line);border-radius:8px;padding:10px;overflow:auto;margin:8px 0}
-.lvl{display:flex;gap:4px}.lvl i{width:22px;height:8px;border-radius:4px;background:#e4e8ed}.lvl i.on{background:var(--acc)}
+.lvl{display:inline-flex;gap:4px;vertical-align:middle}.lvl i{width:22px;height:8px;border-radius:4px;background:#e4e8ed}.lvl i.on{background:var(--acc)}
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
 .row:last-child{border:0}
 .lab{color:var(--mute);font-size:13px}
@@ -37,12 +44,14 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 .pill{display:inline-block;padding:1px 8px;border-radius:999px;background:#e4e8ed;font-size:12px;margin:1px}
 .week{border-left:3px solid var(--acc);padding:4px 0 4px 10px;margin:8px 0}
 details summary{cursor:pointer;color:var(--acc)}
+.liens td:first-child{white-space:nowrap}
 </style>
 </head>
 <body>
 <header>
-<h1>Mon parcours · BTS SIO</h1>
-<p class="sub">Je fais le point sur mes compétences en développement, et je reçois un parcours à mon rythme.</p>
+<div><h1>Mon parcours · BTS SIO</h1>
+<p class="sub">Je fais le point sur mes compétences en développement, et je reçois un parcours à mon rythme.</p></div>
+<button class="badge vide" id="badge" title="Changer de classe ou de semestre">Classe et semestre à choisir</button>
 </header>
 <nav role="tablist">
 <button data-t="accueil" aria-selected="true">Accueil</button>
@@ -58,12 +67,23 @@ details summary{cursor:pointer;color:var(--acc)}
 <div class="card">
 <h2>Bienvenue</h2>
 <label class="lab" for="nom">Prénom et nom (pour que l'enseignant reconnaisse ta fiche si tu la partages)</label>
-<input type="text" id="nom" placeholder="ex. Camille Martin" style="margin:4px 0 12px">
-<button class="btn" id="start">Commencer le positionnement</button>
+<input type="text" id="nom" placeholder="ex. Camille Martin" style="margin:4px 0 14px">
+<div class="lab">Ma classe</div>
+<div class="seg" id="segClasse">
+<button data-c="BTS1" aria-pressed="false"><b>BTS1</b><span>1re année</span></button>
+<button data-c="BTS2" aria-pressed="false"><b>BTS2</b><span>2e année</span></button>
+</div>
+<div class="lab">Le semestre en cours</div>
+<div class="seg" id="segSem">
+<button data-s="S1" aria-pressed="false"><b>Semestre 1</b><span>septembre → janvier</span></button>
+<button data-s="S2" aria-pressed="false"><b>Semestre 2</b><span>février → juin</span></button>
+</div>
+<div id="profilInfo"></div>
+<button class="btn" id="start" disabled>Commencer le positionnement</button>
 </div>
 <div class="grid g2">
 <div class="card"><h2>Ce que fait l'outil</h2><ul class="tight">
-<li>Il te pose des questions sur <b>5 compétences du bloc 1</b> : algorithmique, HTML/CSS, SQL, Git, POO.</li>
+<li>Il te pose des questions sur les <b>compétences travaillées dans ta classe ce semestre</b>.</li>
 <li>Les questions s'adaptent : il monte en difficulté quand tu réussis, et s'arrête dès que tu ne sais pas. Tu peux toujours répondre « je ne sais pas » : c'est une réponse utile, pas une faute.</li>
 <li>Il te propose un ordre de travail et un planning calé sur <b>le temps que tu indiques</b>.</li>
 <li>Tu refais le point quand tu veux, avec d'autres questions.</li>
@@ -81,7 +101,7 @@ details summary{cursor:pointer;color:var(--acc)}
 
 <section id="parcours">
 <div class="card" id="niveaux"></div>
-<div class="card">
+<div class="card" id="rythme">
 <h2>Mon rythme</h2>
 <label class="lab" for="h">Heures que je peux consacrer par semaine, en dehors des cours</label>
 <input type="number" id="h" min="1" max="20" value="3" style="max-width:120px;margin:4px 0 10px">
@@ -100,11 +120,11 @@ details summary{cursor:pointer;color:var(--acc)}
 <section id="partage">
 <div class="card">
 <h2>Ma fiche de positionnement</h2>
-<p>Voici exactement ce que ton enseignant recevra si tu lui transmets ce code : ton nom, tes niveaux par compétence et la date. Rien d'autre (pas tes réponses détaillées, pas la page « Comment je travaille »).</p>
+<p>Voici exactement ce que ton enseignant recevra si tu lui transmets ce code : ton nom, ta classe et ton semestre, tes niveaux par compétence et la date. Rien d'autre (pas tes réponses détaillées, pas la page « Comment je travaille »).</p>
 <div id="apercu"></div>
 <textarea id="code" readonly class="mono"></textarea>
 <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="btn" id="copy">Copier le code</button><span id="copied" class="lab"></span></div>
-<p class="lab">Colle-le dans le message que demande ton enseignant (ENT, mail ou formulaire).</p>
+<p class="lab">Colle-le dans le message que demande ton enseignant (réponse au mail, ENT ou formulaire).</p>
 <h3>Effacer mes données</h3>
 <button class="btn ghost" id="wipe">Tout effacer de ce navigateur</button> <span id="wiped" class="lab"></span>
 </div>
@@ -113,165 +133,166 @@ details summary{cursor:pointer;color:var(--acc)}
 <section id="prof">
 <div class="card">
 <h2>Vue enseignant · besoins du groupe</h2>
-<p class="lab">Collez les codes reçus, un par ligne. Le traitement se fait dans cette page : rien n'est stocké ni envoyé. La vue montre des besoins par compétence pour former des groupes de travail ; elle ne calcule aucun score global ni classement.</p>
-<textarea id="codes" class="mono" placeholder="PARC1:…&#10;PARC1:…"></textarea>
+<p class="lab">Collez les codes reçus, un par ligne, toutes classes confondues : ils sont regroupés par classe et semestre. Le traitement se fait dans cette page : rien n'est stocké ni envoyé. La vue montre des besoins par compétence pour former des groupes de travail ; elle ne calcule aucun score global ni classement.</p>
+<textarea id="codes" class="mono" placeholder="PARC2:…&#10;PARC2:…"></textarea>
 <button class="btn" id="lire" style="margin-top:8px">Analyser</button>
 <div id="profOut"></div>
+</div>
+<div class="card">
+<h2>Liens directs à donner à chaque classe</h2>
+<p class="lab">Avec ces liens, la classe et le semestre sont déjà choisis à l'ouverture (l'étudiant peut encore les changer).</p>
+<table class="liens" id="liens"></table>
 </div>
 </section>
 
 </main>
+<script src="profils.js"></script>
 <script>
-/* ================= CONFIGURATION (à adapter par l'enseignant) =================
-   Chaque compétence a 4 niveaux. Pour chaque niveau : deux variantes de question (a pour le
-   positionnement, b pour le point d'étape) et les activités qui permettent d'atteindre ce niveau.
-   HEURES_PAR_NIVEAU : estimation du travail pour passer d'un niveau au suivant.               */
 const HEURES_PAR_NIVEAU=3;
-const C=[
-{id:'algo',nom:'Algorithmique',pre:null,niv:[
- {a:{q:'Après <code>x = 3 ; x = x + 2</code>, que vaut x ?',o:['5','3','2','32']},b:{q:'Après <code>a = 10 ; b = a ; a = 4</code>, que vaut b ?',o:['10','4','14','0']},act:['Variables et affectation : exercices 1 à 5','Tracer à la main l\'état des variables ligne par ligne']},
- {a:{q:'Combien de fois « ok » s\'affiche-t-il ?<pre>pour i de 1 à 4 : afficher "ok"</pre>',o:['4','3','5','1']},b:{q:'Avec n = 10, qu\'affiche :<pre>si n > 10 alors afficher "A" sinon afficher "B"</pre>',o:['B','A','rien','A puis B']},act:['Conditions : si / sinon, opérateurs de comparaison','Boucles pour : compter, répéter']},
- {a:{q:'Que vaut s à la fin ?<pre>s = 0\npour i de 1 à 3 : s = s + i</pre>',o:['6','3','5','0']},b:{q:'Que vaut n à la fin ?<pre>n = 0\ntant que n < 10 : n = n + 3</pre>',o:['12','9','10','3']},act:['Accumulateurs et compteurs','Boucle tant que : condition d\'arrêt, boucle infinie']},
- {a:{q:'Pour chercher le maximum d\'un tableau, quelle valeur initiale de max est toujours sûre ?',o:['Le premier élément du tableau','0','-1','La longueur du tableau']},b:{q:'Recherche par dichotomie dans un tableau trié de 1 000 éléments : combien de comparaisons au plus, environ ?',o:['10','100','500','1 000']},act:['Fonctions : paramètres, valeur de retour','Algorithmes classiques sur tableaux : max, recherche, tri']}
-]},
-{id:'web',nom:'HTML / CSS',pre:null,niv:[
- {a:{q:'Quelle balise crée un lien hypertexte ?',o:['&lt;a&gt;','&lt;link&gt;','&lt;href&gt;','&lt;url&gt;']},b:{q:'Quelle balise donne le titre principal visible dans la page ?',o:['&lt;h1&gt;','&lt;title&gt;','&lt;head&gt;','&lt;header&gt;']},act:['Structure d\'une page : head, body, titres, paragraphes, liens','Valider sa page avec le validateur du W3C']},
- {a:{q:'Quel attribut donne le texte alternatif d\'une image ?',o:['alt','title','src','desc']},b:{q:'Quel sélecteur CSS vise l\'élément d\'id « menu » ?',o:['#menu','.menu','menu','*menu']},act:['Images, listes, tableaux, accessibilité (alt)','Sélecteurs CSS : balise, classe, id']},
- {a:{q:'<code>p { color: red } .note { color: blue }</code> — de quelle couleur est <code>&lt;p class="note"&gt;</code> ?',o:['bleu','rouge','noir','violet']},b:{q:'Quelle déclaration, sur le parent, aligne ses enfants en ligne ?',o:['display: flex','float: left','position: flex','align: row']},act:['Cascade et spécificité','Flexbox : alignement et répartition']},
- {a:{q:'Pour changer la mise en page sous 600 px de large, on utilise…',o:['@media (max-width: 600px)','@screen 600','@viewport','width: 600px !important']},b:{q:'Quel champ convient le mieux à une adresse e-mail (validation native, clavier mobile) ?',o:['&lt;input type="email"&gt;','&lt;input type="text"&gt;','&lt;textarea&gt;','&lt;input type="mail"&gt;']},act:['Responsive : media queries, unités relatives','Formulaires : types de champs, validation']}
-]},
-{id:'sql',nom:'SQL',pre:null,niv:[
- {a:{q:'Quelle requête lit toutes les colonnes de la table client ?',o:['SELECT * FROM client;','GET * FROM client;','SELECT client;','READ client;']},b:{q:'Quelle clause filtre les lignes d\'un SELECT ?',o:['WHERE','FILTER','HAVING','ORDER BY']},act:['SELECT, FROM, WHERE sur une table','Opérateurs : =, &lt;, LIKE, AND, OR']},
- {a:{q:'Comment trier les résultats par nom alphabétique ?',o:['ORDER BY nom','SORT BY nom','GROUP BY nom','ORDER nom']},b:{q:'Comment compter les lignes de la table commande ?',o:['SELECT COUNT(*) FROM commande;','SELECT SUM(*) FROM commande;','SELECT TOTAL(commande);','SELECT NUMBER FROM commande;']},act:['ORDER BY, LIMIT, DISTINCT','Fonctions d\'agrégat : COUNT, SUM, AVG']},
- {a:{q:'Afficher chaque commande avec le nom de son client (commande.client_id → client.id) :',o:['… FROM commande JOIN client ON client.id = commande.client_id','… FROM commande UNION client','… FROM commande WHERE client = commande','… FROM commande GROUP BY client']},b:{q:'Obtenir le nombre de commandes par client :',o:['SELECT client_id, COUNT(*) FROM commande GROUP BY client_id;','SELECT client_id, COUNT(*) FROM commande ORDER BY client_id;','SELECT DISTINCT client_id FROM commande;','SELECT client_id FROM commande HAVING COUNT;']},act:['Jointures internes','GROUP BY et HAVING']},
- {a:{q:'Lister les clients qui n\'ont jamais commandé :',o:['LEFT JOIN commande … WHERE commande.id IS NULL','INNER JOIN commande … WHERE commande.id = NULL','JOIN commande … WHERE commande.id = 0','SELECT * FROM client EXCEPT client']},b:{q:'Pourquoi utiliser des requêtes préparées ?',o:['Pour empêcher l\'injection SQL en séparant code et données','Pour accélérer l\'affichage de la page','Pour chiffrer la base','Pour éviter les doublons']},act:['Jointures externes, sous-requêtes','Requêtes préparées et injection SQL']}
-]},
-{id:'git',nom:'Git',pre:null,niv:[
- {a:{q:'Quelle commande montre les fichiers modifiés depuis le dernier commit ?',o:['git status','git commit','git push','git init']},b:{q:'Quelle commande enregistre les modifications indexées dans l\'historique ?',o:['git commit -m "message"','git save','git push','git add']},act:['Créer un dépôt, status, commit','Écrire un bon message de commit']},
- {a:{q:'Comment ajouter un fichier à l\'index (zone de préparation) ?',o:['git add fichier','git commit fichier','git index fichier','git push fichier']},b:{q:'Comment envoyer ses commits vers le dépôt distant ?',o:['git push','git pull','git fetch','git send']},act:['add, commit, log : le cycle complet','Dépôt distant : clone, push, pull']},
- {a:{q:'Comment créer une branche et basculer dessus ?',o:['git switch -c ma-branche','git branch --go ma-branche','git checkout ma-branche (sur une branche qui n\'existe pas)','git merge ma-branche']},b:{q:'Comment récupérer et intégrer les modifications distantes de la branche courante ?',o:['git pull','git push','git clone','git status']},act:['Branches : créer, basculer, fusionner','Travailler à plusieurs sur un même dépôt']},
- {a:{q:'Git signale un conflit de fusion. Que faites-vous ?',o:['J\'édite les zones marquées &lt;&lt;&lt;&lt;&lt;&lt;&lt;, puis git add et git commit','Je supprime le dépôt local et je reclone','git push --force','J\'attends que Git le résolve']},b:{q:'Comment annuler un commit déjà poussé et partagé, sans réécrire l\'historique ?',o:['git revert &lt;commit&gt;','git reset --hard &lt;commit&gt;','git commit --amend','git rebase -i']},act:['Résoudre un conflit','Annuler proprement : revert, restore']}
-]},
-{id:'poo',nom:'POO',pre:{id:'algo',niv:2},niv:[
- {a:{q:'Une classe, c\'est…',o:['Un modèle à partir duquel on crée des objets','Un objet particulier','Une variable globale','Une fonction']},b:{q:'Créer un objet à partir d\'une classe s\'appelle…',o:['Instancier','Hériter','Encapsuler','Compiler']},act:['Classe, objet, attribut, méthode','Écrire et instancier sa première classe']},
- {a:{q:'Déclarer un attribut private sert à…',o:['Empêcher l\'accès direct depuis l\'extérieur de la classe','Accélérer le programme','Le partager entre toutes les instances','Le rendre constant']},b:{q:'Quelle méthode est appelée automatiquement à la création d\'un objet ?',o:['Le constructeur','Le destructeur','Un accesseur (getter)','main']},act:['Encapsulation : private, accesseurs','Constructeurs']},
- {a:{q:'<code>class Chien extends Animal</code> signifie…',o:['Chien hérite de Animal','Animal hérite de Chien','Chien contient un attribut Animal','Les deux classes sont identiques']},b:{q:'Quel mot-clé rend un attribut commun à toutes les instances ?',o:['static','private','abstract','new']},act:['Héritage, redéfinition de méthode','Membres statiques']},
- {a:{q:'Une interface sert à…',o:['Définir un contrat de méthodes que des classes s\'engagent à implémenter','Stocker des données','Créer une instance','Remplacer l\'héritage dans tous les cas']},b:{q:'Le polymorphisme permet…',o:['D\'appeler la même méthode sur des objets de classes différentes, chacune avec son comportement','D\'avoir plusieurs constructeurs, uniquement','De copier un objet','De cacher les attributs']},act:['Classes abstraites et interfaces','Polymorphisme']}
-]}];
-const REFL=[
- 'Quand je bloque sur un exercice, qu\'est-ce que je fais en premier ?',
- 'Dans quelles conditions je travaille le mieux (moment, lieu, seul ou à plusieurs) ?',
- 'Qu\'est-ce qui m\'aiderait le plus en cours en ce moment ?',
- 'Une réussite récente dont je suis content, même petite :'
-];
-/* ================= ÉTAT ================= */
+const REFL=['Quand je bloque sur un exercice, qu\'est-ce que je fais en premier ?','Dans quelles conditions je travaille le mieux (moment, lieu, seul ou à plusieurs) ?','Qu\'est-ce qui m\'aiderait le plus en cours en ce moment ?','Une réussite récente dont je suis content, même petite :'];
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const KEY='parcours-bts-sio-v1';
-let S={nom:'',niv:{},hist:[],h:3,refl:{},fait:false};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- état : un jeu de données par profil (classe + semestre) ---------- */
+const KEY='parcours-bts-sio-v2';
+let S={nom:'',classe:null,sem:null,data:{},refl:{}};
 try{const x=JSON.parse(localStorage.getItem(KEY));if(x)S=Object.assign(S,x)}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const pkey=()=>S.classe&&S.sem?(S.classe+'-'+S.sem).toLowerCase():null;
+const P=()=>PROFILS[pkey()]||null;
+const C=()=>P()?P().comps:[];
+function D(){const k=pkey();if(!k)return null;return S.data[k]=S.data[k]||{niv:{},hist:[],h:3,fait:false}}
+
+/* ---------- lien direct #bts1-s1 … ---------- */
+function lireHash(){const h=location.hash.slice(1).toLowerCase();if(PROFILS[h]){S.classe=PROFILS[h].classe;S.sem=PROFILS[h].semestre;save()}}
+lireHash();window.addEventListener('hashchange',()=>{lireHash();majProfil()});
+
 $('#nom').value=S.nom;$('#nom').oninput=e=>{S.nom=e.target.value;save()};
-function show(t){$$('nav button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===t));$$('section').forEach(s=>s.classList.toggle('on',s.id===t));({parcours:renderParcours,partage:renderPartage,reflexion:renderRefl,diag:()=>{if(!quiz)renderDiagIntro()}}[t]||(()=>{}))()}
+$$('#segClasse button').forEach(b=>b.onclick=()=>{S.classe=b.dataset.c;save();quiz=null;majProfil()});
+$$('#segSem button').forEach(b=>b.onclick=()=>{S.sem=b.dataset.s;save();quiz=null;majProfil()});
+$('#badge').onclick=()=>show('accueil');
+
+function majProfil(){
+ $$('#segClasse button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===S.classe));
+ $$('#segSem button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===S.sem));
+ const p=P();
+ $('#badge').textContent=p?p.titre:'Classe et semestre à choisir';$('#badge').classList.toggle('vide',!p);
+ $('#start').disabled=!p;
+ if(p){const d=D();$('#profilInfo').innerHTML=`<div class="note"><b>${esc(p.titre)}</b> — ${esc(p.sous)}<br><span class="lab">${p.comps.length} compétences : ${p.comps.map(c=>esc(c.nom)).join(' · ')}</span>${d.fait?'<br><span class="lab">Tu as déjà un positionnement pour ce semestre : retrouve-le dans « Mon parcours ».</span>':''}</div>`;$('#start').textContent=d.fait?'Refaire le positionnement':'Commencer le positionnement'}
+ else $('#profilInfo').innerHTML='<p class="lab">Choisis ta classe et le semestre en cours : les questions portent sur ce que vous travaillez à ce moment de l\'année.</p>';
+ if(location.hash.slice(1)!==(pkey()||'')&&pkey())history.replaceState(null,'','#'+pkey());
+}
+function show(t){
+ if(t!=='accueil'&&t!=='prof'&&!P()){t='accueil'}
+ $$('nav button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===t));$$('section').forEach(s=>s.classList.toggle('on',s.id===t));
+ ({parcours:renderParcours,partage:renderPartage,reflexion:renderRefl,diag:()=>{if(!quiz)renderDiagIntro()},prof:renderLiens}[t]||(()=>{}))();
+}
 $$('nav button').forEach(b=>b.onclick=()=>show(b.dataset.t));
 function shuffle(a,seed){a=a.map((x,i)=>[x,i]);let s=seed;for(let i=a.length-1;i>0;i--){s=(s*9301+49297)%233280;const j=Math.floor(s/233280*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
-/* ================= POSITIONNEMENT ADAPTATIF =================
+/* ---------- positionnement adaptatif ----------
    Pour chaque compétence on part du niveau 1. Réussite → niveau suivant.
-   Échec ou « je ne sais pas » → on s'arrête : le niveau acquis est le dernier réussi.
-   En point d'étape, on part du niveau visé (acquis + 1) avec la variante b.                 */
+   Échec ou « je ne sais pas » → arrêt : le niveau acquis est le dernier réussi.
+   En point d'étape, on part du niveau visé avec la variante b.                 */
 let quiz=null;
 function renderDiagIntro(){
- const done=Object.keys(S.niv).length===C.length;
- $('#diagBox').innerHTML=`<h2>Positionnement</h2><p>Entre 5 et 20 questions selon tes réponses, environ 10 minutes. Aucune limite de temps : prends le temps de lire.</p>${done?'<p class="note">Tu as déjà fait ton positionnement. Le refaire remplace tes niveaux. Pour avancer, utilise plutôt « Faire le point » dans Mon parcours.</p>':''}<button class="btn" id="go">${done?'Refaire le positionnement':'C\'est parti'}</button>`;
- $('#go').onclick=()=>startQuiz(C.map(c=>({c,from:0,var:'a'})),'positionnement');
+ const d=D(),p=P();
+ $('#diagBox').innerHTML=`<h2>Positionnement · ${esc(p.titre)}</h2><p>Entre ${p.comps.length} et ${p.comps.length*4} questions selon tes réponses, environ 10 minutes. Aucune limite de temps : prends le temps de lire.</p>${d.fait?'<p class="note">Tu as déjà fait ton positionnement pour ce semestre. Le refaire remplace tes niveaux. Pour avancer, utilise plutôt « Faire le point » dans Mon parcours.</p>':''}<button class="btn" id="go">${d.fait?'Refaire le positionnement':'C\'est parti'}</button>`;
+ $('#go').onclick=()=>startQuiz(C().map(c=>({c,from:0,var:'a'})),'positionnement');
 }
-function startQuiz(plan,mode){quiz={plan,k:0,lvl:plan[0].from,res:{},mode,n:0};nextQ()}
+function startQuiz(plan,mode){quiz={plan,k:0,lvl:plan[0].from,res:{},mode,n:0,key:pkey()};nextQ()}
+function avance(p){quiz.res[p.c.id]=quiz.lvl;quiz.k++;if(quiz.plan[quiz.k])quiz.lvl=quiz.plan[quiz.k].from;nextQ()}
 function nextQ(){
  const p=quiz.plan[quiz.k];
- if(!p){return endQuiz()}
- if(quiz.lvl>=4){quiz.res[p.c.id]=4;quiz.k++;if(quiz.plan[quiz.k])quiz.lvl=quiz.plan[quiz.k].from;return nextQ()}
+ if(!p)return endQuiz();
+ if(quiz.lvl>=4)return avance(p);
  const it=p.c.niv[quiz.lvl][p.var];quiz.n++;
  const opts=shuffle(it.o,quiz.n*31+quiz.lvl*7+p.c.id.length);
- $('#diagBox').innerHTML=`<div class="lab">${p.c.nom} · question de niveau ${quiz.lvl+1} / 4</div><h2 style="margin-top:6px">${it.q}</h2>`+opts.map(([o,i])=>`<button class="opt" data-ok="${i===0}">${o}</button>`).join('')+`<button class="opt idk" data-ok="false">Je ne sais pas</button>`;
- $$('#diagBox .opt').forEach(b=>b.onclick=()=>{
-  if(b.dataset.ok==='true'){quiz.lvl++;nextQ()}
-  else{quiz.res[p.c.id]=quiz.lvl;quiz.k++;if(quiz.plan[quiz.k])quiz.lvl=quiz.plan[quiz.k].from;nextQ()}
- });
+ $('#diagBox').innerHTML=`<div class="lab">${esc(P().titre)} · ${esc(p.c.nom)} · question de niveau ${quiz.lvl+1} / 4</div><h2 style="margin-top:6px">${it.q}</h2>`+opts.map(([o,i])=>`<button class="opt" data-ok="${i===0}">${o}</button>`).join('')+`<button class="opt idk" data-ok="false">Je ne sais pas</button>`;
+ $$('#diagBox .opt').forEach(b=>b.onclick=()=>{if(b.dataset.ok==='true'){quiz.lvl++;nextQ()}else avance(p)});
 }
 function endQuiz(){
- const d=new Date().toISOString().slice(0,10);
- const avant={...S.niv};
- Object.entries(quiz.res).forEach(([id,v])=>{S.niv[id]=quiz.mode==='point'?Math.max(S.niv[id]||0,v):v});
- S.hist.push({d,mode:quiz.mode,niv:{...S.niv}});S.fait=true;save();
- const lignes=C.filter(c=>c.id in quiz.res).map(c=>{const a=avant[c.id],n=S.niv[c.id];return`<div class="row"><b>${c.nom}</b><span>${quiz.mode==='point'&&a!==undefined?`niveau ${a} → <b>${n}</b>`:`niveau <b>${n}</b> / 4`}</span></div>`}).join('');
+ const d=D(),dt=new Date().toISOString().slice(0,10),avant={...d.niv};
+ Object.entries(quiz.res).forEach(([id,v])=>{d.niv[id]=quiz.mode==='point'?Math.max(d.niv[id]||0,v):v});
+ d.hist.push({d:dt,mode:quiz.mode,niv:{...d.niv}});d.fait=true;save();
+ const lignes=C().filter(c=>c.id in quiz.res).map(c=>{const a=avant[c.id],n=d.niv[c.id];return`<div class="row"><b>${esc(c.nom)}</b><span>${quiz.mode==='point'&&a!==undefined?`niveau ${a} → <b>${n}</b>`:`niveau <b>${n}</b> / 4`}</span></div>`}).join('');
  $('#diagBox').innerHTML=`<h2>${quiz.mode==='point'?'Point d\'étape enregistré':'Positionnement terminé'}</h2>${lignes}<p class="lab">Un niveau n'est pas une note : il indique par où commencer.</p><button class="btn" id="toP">Voir mon parcours</button>`;
  quiz=null;$('#toP').onclick=()=>show('parcours');
 }
-$('#start').onclick=()=>{show('diag');startQuiz(C.map(c=>({c,from:0,var:'a'})),'positionnement')};
+$('#start').onclick=()=>{if(!P())return;show('diag');startQuiz(C().map(c=>({c,from:0,var:'a'})),'positionnement')};
 
-/* ================= PARCOURS ================= */
-function ordre(){
- // prérequis d'abord, puis du niveau le plus bas au plus haut
- return C.map(c=>({c,n:S.niv[c.id]??0})).filter(x=>x.n<4).sort((x,y)=>{
-  const bx=x.c.pre&&(S.niv[x.c.pre.id]??0)<x.c.pre.niv, by=y.c.pre&&(S.niv[y.c.pre.id]??0)<y.c.pre.niv;
-  return (bx-by)||(x.n-y.n);
- });
-}
+/* ---------- parcours ---------- */
+const niv=id=>D().niv[id]??0;
+const bloque=c=>c.pre&&niv(c.pre.id)<c.pre.niv;
+function ordre(){return C().map(c=>({c,n:niv(c.id)})).filter(x=>x.n<4).sort((x,y)=>(bloque(x.c)-bloque(y.c))||(x.n-y.n))}
 function lvlBar(n){return`<span class="lvl">${[0,1,2,3].map(i=>`<i class="${i<n?'on':''}"></i>`).join('')}</span>`}
 function renderParcours(){
- if(!S.fait){$('#niveaux').innerHTML='<h2>Mon parcours</h2><p>Fais d\'abord le positionnement.</p><button class="btn" id="g">Commencer</button>';$('#g').onclick=()=>show('diag');$('#plan').innerHTML='';return}
- const O=ordre();
- $('#niveaux').innerHTML='<h2>Où j\'en suis</h2>'+C.map(c=>{const n=S.niv[c.id]??0;const bloc=c.pre&&(S.niv[c.pre.id]??0)<c.pre.niv;
-  return`<div class="row"><div><b>${c.nom}</b> ${lvlBar(n)} <span class="lab">niveau ${n}/4</span>${bloc?`<div class="lab">Conseillé après ${C.find(x=>x.id===c.pre.id).nom} niveau ${c.pre.niv}</div>`:''}
-  ${n<4?`<details><summary>Pour atteindre le niveau ${n+1}</summary><ul class="tight">${c.niv[n].act.map(a=>`<li>${a}</li>`).join('')}</ul></details>`:'<div class="lab">Compétence maîtrisée sur ce référentiel</div>'}</div>
+ const d=D();
+ if(!d.fait){$('#niveaux').innerHTML=`<h2>Mon parcours · ${esc(P().titre)}</h2><p>Fais d'abord le positionnement de ce semestre.</p><button class="btn" id="g">Commencer</button>`;$('#g').onclick=()=>show('diag');$('#rythme').style.display='none';return}
+ $('#rythme').style.display='';
+ $('#niveaux').innerHTML=`<h2>Où j'en suis · ${esc(P().titre)}</h2>`+C().map(c=>{const n=niv(c.id);
+  return`<div class="row"><div><b>${esc(c.nom)}</b> ${lvlBar(n)} <span class="lab">niveau ${n}/4</span>${bloque(c)?`<div class="lab">Conseillé après ${esc(C().find(x=>x.id===c.pre.id).nom)} niveau ${c.pre.niv}</div>`:''}
+  ${n<4?`<details><summary>Pour atteindre le niveau ${n+1}</summary><ul class="tight">${c.niv[n].act.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></details>`:'<div class="lab">Compétence maîtrisée pour ce semestre</div>'}</div>
   ${n<4?`<button class="btn sec" data-point="${c.id}">Faire le point</button>`:''}</div>`}).join('')
-  +(S.hist.length>1?`<h3>Mon évolution</h3><table><tr><th>Date</th>${C.map(c=>`<th>${c.nom}</th>`).join('')}</tr>${S.hist.map(h=>`<tr><td>${h.d}</td>${C.map(c=>`<td>${h.niv[c.id]??'–'}</td>`).join('')}</tr>`).join('')}</table>`:'');
- $$('[data-point]').forEach(b=>b.onclick=()=>{const c=C.find(x=>x.id===b.dataset.point);show('diag');startQuiz([{c,from:S.niv[c.id]??0,var:'b'}],'point')});
- $('#h').value=S.h;renderPlan(O);
+  +(d.hist.length>1?`<h3>Mon évolution</h3><table><tr><th>Date</th>${C().map(c=>`<th>${esc(c.nom)}</th>`).join('')}</tr>${d.hist.map(h=>`<tr><td>${h.d}</td>${C().map(c=>`<td>${h.niv[c.id]??'–'}</td>`).join('')}</tr>`).join('')}</table>`:'');
+ $$('[data-point]').forEach(b=>b.onclick=()=>{const c=C().find(x=>x.id===b.dataset.point);show('diag');startQuiz([{c,from:niv(c.id),var:'b'}],'point')});
+ $('#h').value=d.h;renderPlan();
 }
-function renderPlan(O){
- const h=Math.max(1,+$('#h').value||1);S.h=h;save();
- // file des étapes : on alterne les compétences pour ne pas passer des semaines sur une seule
- const files=O.map(x=>({c:x.c,n:x.n}));const steps=[];
+function renderPlan(){
+ const d=D();const h=Math.max(1,+$('#h').value||1);d.h=h;save();
+ const files=ordre().map(x=>({c:x.c,n:x.n}));const steps=[];
  let reste=true;while(reste){reste=false;for(const f of files){if(f.n<4){steps.push({c:f.c,cible:f.n+1});f.n++;reste=true}}}
- let t=0,weeks={};steps.forEach(s=>{const w=Math.floor(t/h)+1;(weeks[w]=weeks[w]||[]).push(s);t+=HEURES_PAR_NIVEAU});
- const W=Object.keys(weeks).slice(0,8);
- $('#plan').innerHTML=steps.length?`<p class="lab">${steps.length} étapes · environ ${steps.length*HEURES_PAR_NIVEAU} h · ${Object.keys(weeks).length} semaine(s) à ce rythme. Le planning se recalcule à chaque point d'étape.</p>`+W.map(w=>`<div class="week"><b>Semaine ${w}</b><br>${weeks[w].map(s=>`<span class="pill">${s.c.nom} → niveau ${s.cible}</span>`).join(' ')}</div>`).join('')+(Object.keys(weeks).length>8?'<p class="lab">… la suite s\'affichera au fil de tes points d\'étape.</p>':''):'<p class="note">Tout est au niveau 4. Parles-en à ton enseignant pour aller plus loin.</p>';
+ let t=0;const weeks={};steps.forEach(s=>{const w=Math.floor(t/h)+1;(weeks[w]=weeks[w]||[]).push(s);t+=HEURES_PAR_NIVEAU});
+ const W=Object.keys(weeks);
+ $('#plan').innerHTML=steps.length?`<p class="lab">${steps.length} étapes · environ ${steps.length*HEURES_PAR_NIVEAU} h · ${W.length} semaine(s) à ce rythme. Le planning se recalcule à chaque point d'étape.</p>`+W.slice(0,8).map(w=>`<div class="week"><b>Semaine ${w}</b><br>${weeks[w].map(s=>`<span class="pill">${esc(s.c.nom)} → niveau ${s.cible}</span>`).join(' ')}</div>`).join('')+(W.length>8?'<p class="lab">… la suite s\'affichera au fil de tes points d\'étape.</p>':''):'<p class="note">Tout est au niveau 4 pour ce semestre. Parles-en à ton enseignant pour aller plus loin.</p>';
 }
-$('#h').oninput=()=>renderPlan(ordre());
+$('#h').oninput=renderPlan;
 
-/* ================= RÉFLEXION (privée) ================= */
+/* ---------- réflexion (privée, commune aux semestres) ---------- */
 function renderRefl(){
- $('#refl').innerHTML=REFL.map((q,i)=>`<h3>${q}</h3><textarea data-i="${i}">${(S.refl[i]||'').replace(/</g,'&lt;')}</textarea>`).join('');
+ $('#refl').innerHTML=REFL.map((q,i)=>`<h3>${q}</h3><textarea data-i="${i}">${esc(S.refl[i]||'')}</textarea>`).join('');
  $$('#refl textarea').forEach(t=>t.oninput=()=>{S.refl[t.dataset.i]=t.value;save()});
 }
 
-/* ================= PARTAGE ================= */
+/* ---------- partage ---------- */
 function renderPartage(){
- if(!S.fait){$('#apercu').innerHTML='<p class="warn">Fais d\'abord le positionnement.</p>';$('#code').value='';return}
- const fiche={v:1,nom:S.nom.trim()||'(sans nom)',d:S.hist[S.hist.length-1].d,niv:S.niv};
- $('#apercu').innerHTML='<table><tr><th>Nom</th><th>Date</th>'+C.map(c=>`<th>${c.nom}</th>`).join('')+`</tr><tr><td>${fiche.nom.replace(/</g,'&lt;')}</td><td>${fiche.d}</td>`+C.map(c=>`<td>${S.niv[c.id]??'–'}</td>`).join('')+'</tr></table>';
- $('#code').value='PARC1:'+btoa(unescape(encodeURIComponent(JSON.stringify(fiche))));
+ const d=D();
+ if(!d.fait){$('#apercu').innerHTML='<p class="warn">Fais d\'abord le positionnement de ce semestre.</p>';$('#code').value='';return}
+ const fiche={v:2,p:pkey(),nom:S.nom.trim()||'(sans nom)',d:d.hist[d.hist.length-1].d,niv:d.niv};
+ $('#apercu').innerHTML=`<table><tr><th>Nom</th><th>Classe</th><th>Date</th>${C().map(c=>`<th>${esc(c.nom)}</th>`).join('')}</tr><tr><td>${esc(fiche.nom)}</td><td>${esc(P().titre)}</td><td>${fiche.d}</td>${C().map(c=>`<td>${d.niv[c.id]??'–'}</td>`).join('')}</tr></table>`;
+ $('#code').value='PARC2:'+btoa(unescape(encodeURIComponent(JSON.stringify(fiche))));
 }
 $('#copy').onclick=async()=>{try{await navigator.clipboard.writeText($('#code').value);$('#copied').textContent='Copié.'}catch(e){$('#code').select();$('#copied').textContent='Sélectionné : fais Ctrl+C.'}};
 let wipeArm=false;
 $('#wipe').onclick=()=>{if(!wipeArm){wipeArm=true;$('#wiped').textContent='Clique encore une fois pour confirmer.';return}
- try{localStorage.removeItem(KEY)}catch(e){}S={nom:'',niv:{},hist:[],h:3,refl:{},fait:false};$('#nom').value='';wipeArm=false;$('#wiped').textContent='Effacé.';renderPartage()};
+ try{localStorage.removeItem(KEY)}catch(e){}S={nom:'',classe:null,sem:null,data:{},refl:{}};$('#nom').value='';wipeArm=false;$('#wiped').textContent='Effacé.';majProfil();show('accueil')};
 
-/* ================= VUE ENSEIGNANT ================= */
+/* ---------- vue enseignant ---------- */
+function renderLiens(){
+ const base=location.origin+location.pathname;
+ $('#liens').innerHTML=Object.entries(PROFILS).map(([k,p])=>`<tr><td><b>${esc(p.titre)}</b></td><td class="mono">${esc(base)}#${k}</td><td><button class="btn sec" data-lien="${esc(base)}#${k}">Copier</button></td></tr>`).join('');
+ $$('[data-lien]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.lien);b.textContent='Copié'}catch(e){b.textContent='Copie refusée'}});
+}
 $('#lire').onclick=()=>{
- const F=[],bad=[];
- $('#codes').value.split(/\s+/).filter(Boolean).forEach(l=>{try{if(!l.startsWith('PARC1:'))throw 0;F.push(JSON.parse(decodeURIComponent(escape(atob(l.slice(6))))))}catch(e){bad.push(l.slice(0,20)+'…')}});
- if(!F.length){$('#profOut').innerHTML='<p class="warn">Aucun code valide.</p>';return}
- const esc=s=>String(s).replace(/</g,'&lt;');
- let h=`<p class="lab">${F.length} fiche(s) lue(s)${bad.length?` · ${bad.length} ligne(s) ignorée(s)`:''}.</p><h3>Répartition par compétence</h3><table><tr><th>Compétence</th>${[0,1,2,3,4].map(n=>`<th>Niv. ${n}</th>`).join('')}</tr>`;
- C.forEach(c=>{h+=`<tr><td><b>${c.nom}</b></td>`+[0,1,2,3,4].map(n=>{const x=F.filter(f=>(f.niv[c.id]??0)===n);return`<td>${x.length||''}</td>`}).join('')+'</tr>'});
- h+='</table><h3>Groupes de besoin suggérés</h3><p class="lab">Qui travaille quoi la prochaine fois, par compétence et par marche à franchir. À ajuster après échange avec chaque étudiant.</p>';
- C.forEach(c=>{const g={};F.forEach(f=>{const n=f.niv[c.id]??0;if(n<4)(g[n]=g[n]||[]).push(f.nom)});
-  h+=`<div class="row" style="display:block"><b>${c.nom}</b>`+Object.keys(g).sort().map(n=>`<div style="margin-top:4px"><span class="pill">vers niveau ${+n+1}</span> ${g[n].map(esc).join(', ')} <span class="lab">— ${c.niv[n].act[0]}</span></div>`).join('')+'</div>'});
- h+=`<details style="margin-top:12px"><summary>Fiches individuelles</summary><table><tr><th>Nom</th><th>Date</th>${C.map(c=>`<th>${c.nom}</th>`).join('')}</tr>${F.map(f=>`<tr><td>${esc(f.nom)}</td><td>${esc(f.d)}</td>${C.map(c=>`<td>${f.niv[c.id]??'–'}</td>`).join('')}</tr>`).join('')}</table></details>`;
+ const F={},bad=[];
+ $('#codes').value.split(/\s+/).filter(Boolean).forEach(l=>{try{
+  if(!l.startsWith('PARC2:'))throw 0;const f=JSON.parse(decodeURIComponent(escape(atob(l.slice(6)))));
+  if(!PROFILS[f.p])throw 0;(F[f.p]=F[f.p]||[]).push(f)}catch(e){bad.push(l)}});
+ const keys=Object.keys(PROFILS).filter(k=>F[k]);
+ if(!keys.length){$('#profOut').innerHTML='<p class="warn">Aucun code valide. Les codes commencent par PARC2:</p>';return}
+ let h=`<p class="lab">${keys.reduce((n,k)=>n+F[k].length,0)} fiche(s) lue(s)${bad.length?` · ${bad.length} ligne(s) ignorée(s)`:''}.</p>`;
+ keys.forEach(k=>{const p=PROFILS[k],L=F[k];
+  h+=`<h3 style="margin-top:18px">${esc(p.titre)} · ${L.length} fiche(s)</h3><table><tr><th>Compétence</th>${[0,1,2,3,4].map(n=>`<th>Niv. ${n}</th>`).join('')}</tr>`;
+  p.comps.forEach(c=>{h+=`<tr><td><b>${esc(c.nom)}</b></td>`+[0,1,2,3,4].map(n=>{const x=L.filter(f=>(f.niv[c.id]??0)===n).length;return`<td>${x||''}</td>`}).join('')+'</tr>'});
+  h+='</table><p class="lab" style="margin-top:10px">Groupes de besoin suggérés : qui travaille quoi la prochaine fois. À ajuster après échange avec chaque étudiant.</p>';
+  p.comps.forEach(c=>{const g={};L.forEach(f=>{const n=f.niv[c.id]??0;if(n<4)(g[n]=g[n]||[]).push(f.nom)});
+   h+=`<div class="row" style="display:block"><b>${esc(c.nom)}</b>`+(Object.keys(g).length?Object.keys(g).sort().map(n=>`<div style="margin-top:4px"><span class="pill">vers niveau ${+n+1}</span> ${g[n].map(esc).join(', ')} <span class="lab">— ${esc(c.niv[n].act[0])}</span></div>`).join(''):'<div class="lab">Tout le monde au niveau 4.</div>')+'</div>'});
+  h+=`<details style="margin-top:8px"><summary>Fiches individuelles</summary><table><tr><th>Nom</th><th>Date</th>${p.comps.map(c=>`<th>${esc(c.nom)}</th>`).join('')}</tr>${L.map(f=>`<tr><td>${esc(f.nom)}</td><td>${esc(f.d)}</td>${p.comps.map(c=>`<td>${f.niv[c.id]??'–'}</td>`).join('')}</tr>`).join('')}</table></details>`;
+ });
  $('#profOut').innerHTML=h;
 };
+
+majProfil();
 </script>
 </body>
 </html>
